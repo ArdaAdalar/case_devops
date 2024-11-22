@@ -1,15 +1,26 @@
-FROM node:14-alpine
-WORKDIR /mern-project/client
-COPY . .
+
+# Base image olarak Node.js kullan
+FROM node:18 as build
+
+# Çalışma dizinini ayarla
+WORKDIR /app/mern-project/client
+
+# Paket dosyalarını kopyala ve bağımlılıkları yükle
+COPY package*.json ./
 RUN npm install
-RUN npm install -g live-server
+
+# Uygulamayı build et
+COPY . .
 RUN npm run build
-CMD [ "live-server", "build"]
 
+# Final image için Nginx kullan
+FROM nginx:alpine
 
+# Build edilmiş dosyaları Nginx'e kopyala
+COPY --from=build /app/build /usr/share/nginx/html
 
-FROM node:14-alpine
-WORKDIR /mern-project/client
-COPY . .
-RUN npm install
-CMD [ "npm", "start"]
+# Nginx portunu aç
+EXPOSE 80
+
+# Nginx'i çalıştır
+CMD ["nginx", "-g", "daemon off;"]
