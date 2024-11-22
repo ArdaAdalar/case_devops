@@ -1,7 +1,11 @@
 import { MongoClient } from "mongodb";
 
-const connectionString = process.env.ATLAS_URI || "mongodb://127.0.0.1:27017";
+//const connectionString = process.env.ATLAS_URI || "mongodb://127.0.0.1:27017";
+//const client = new MongoClient(connectionString);
+
+const connectionString = process.env.ATLAS_URI || "mongodb://root:example@mongodb:27017/admin";
 const client = new MongoClient(connectionString);
+
 
 let db;
 
