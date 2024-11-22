@@ -1,26 +1,19 @@
-
-# Base image olarak Node.js kullan
+# Node.js imajını kullan
 FROM node:18 as build
 
-# Çalışma dizinini ayarla
-WORKDIR /app/mern-project/client
+# Çalışma dizini belirle
+WORKDIR /app
 
 # Paket dosyalarını kopyala ve bağımlılıkları yükle
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Uygulamayı build et
+# Kaynak dosyaları kopyala ve build et
 COPY . .
 RUN npm run build
 
-# Final image için Nginx kullan
+# Nginx ile build edilmiş dosyaları sun
 FROM nginx:alpine
-
-# Build edilmiş dosyaları Nginx'e kopyala
 COPY --from=build /app/build /usr/share/nginx/html
-
-# Nginx portunu aç
 EXPOSE 80
-
-# Nginx'i çalıştır
 CMD ["nginx", "-g", "daemon off;"]
